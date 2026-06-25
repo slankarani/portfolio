@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Meta, Notifications Design Vision Sprint | Saara Lankarani</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --plum:#4A1942;
+  --plum-light:#EDE8E0;
+  --cream:#F5F0E8;
+  --ink:#111111;
+  --muted:#5C5260;
+  --rule:#C8BFC6;
+}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font-family:'Lora',serif;font-weight:400;line-height:1.6}
+a{color:inherit;text-decoration:none}
+img{display:block;width:100%}
+
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:210px;border-right:2px solid var(--ink);background:var(--cream);display:flex;flex-direction:column;z-index:100;padding:2rem 1.5rem}
+.s-mark{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:0.06em;color:var(--plum);line-height:1;margin-bottom:0.3rem}
+.s-role{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase;line-height:1.4}
+.s-nav{list-style:none;margin-top:auto;margin-bottom:auto;padding-top:2rem;border-top:1px solid var(--rule)}
+.s-nav li+li{margin-top:1.25rem}
+.s-nav a{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);transition:color .2s;display:flex;align-items:center;gap:.6rem}
+.s-nav a:hover,.s-nav a.active{color:var(--ink)}
+.s-nav a.active::before{content:'';width:7px;height:7px;background:var(--plum);border-radius:50%;flex-shrink:0}
+.s-nav a:not(.active)::before{content:'';width:7px;height:7px;border:1px solid var(--rule);border-radius:50%;flex-shrink:0}
+.s-foot{border-top:1px solid var(--rule);padding-top:1rem}
+.s-clock{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);display:block;margin-bottom:.75rem}
+.s-links{display:flex;gap:.875rem}
+.s-links a{color:var(--muted);transition:color .2s}
+.s-links a:hover{color:var(--plum)}
+
+.mob-header{display:none;position:fixed;top:0;left:0;right:0;height:54px;border-bottom:2px solid var(--ink);background:var(--cream);padding:0 1.5rem;align-items:center;justify-content:space-between;z-index:100}
+
+.main{margin-left:210px}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:5rem 4rem 4rem;border-bottom:3px solid var(--ink);position:relative;overflow:hidden}
+.hero-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(90px,15vw,200px);line-height:.88;letter-spacing:0.02em;color:var(--ink);position:relative;z-index:1}
+.hero-sub{font-family:'Lora',serif;font-style:italic;font-size:clamp(20px,2.5vw,30px);color:var(--muted);margin-top:1.75rem;margin-bottom:2.5rem;position:relative;z-index:1;max-width:48ch;line-height:1.45}
+.hero-ctas{display:flex;align-items:center;gap:2rem;position:relative;z-index:1}
+.btn-ink{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--cream);background:var(--ink);padding:.875rem 1.75rem;transition:background .2s;display:inline-flex;align-items:center;gap:.625rem}
+.btn-ink:hover{background:var(--plum)}
+.btn-ghost{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);display:inline-flex;align-items:center;gap:.5rem;transition:color .2s}
+.btn-ghost:hover{color:var(--ink)}
+
+.swap-row{display:flex;align-items:baseline;gap:.4em}
+.swap-wrap{position:relative;display:inline-block;height:1.1em;overflow:hidden;min-width:230px;vertical-align:bottom}
+.swap-w{position:absolute;left:0;top:0;color:var(--plum);font-style:italic;transition:opacity .5s,transform .5s;white-space:nowrap}
+.swap-w.hidden{opacity:0;transform:translateY(5px);pointer-events:none}
+
+.pg-section{border-bottom:1px solid var(--rule)}
+.sec-pad{padding:4.5rem 4rem}
+.eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:1.25rem}
+
+.display{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,80px);line-height:.95;letter-spacing:0.03em;color:var(--ink);margin-bottom:2rem}
+.display em{color:var(--plum);font-style:normal}
+
+.about-inner{max-width:600px}
+.about-inner p{font-family:'Lora',serif;font-size:1.125rem;line-height:1.85;color:#1E1A1E}
+.about-inner p+p{margin-top:1.125rem}
+.about-inner p:first-child{font-size:1.375rem;font-style:italic;color:var(--ink)}
+
+.work-list{display:flex;flex-direction:column}
+.work-item{padding:2.75rem 4rem;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:56px 1fr auto;gap:2rem;align-items:start;transition:background .2s}
+.work-item:hover{background:var(--plum-light)}
+.work-num{font-family:'Space Mono',monospace;font-size:11px;color:var(--rule);padding-top:4px}
+.work-co{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--plum);display:block;margin-bottom:.5rem}
+.work-hed{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,3.5vw,44px);letter-spacing:.03em;color:var(--ink);line-height:1;margin-bottom:.875rem}
+.work-line{font-family:'Lora',serif;font-size:1.0625rem;line-height:1.7;color:var(--muted);max-width:50ch;margin-bottom:1.25rem}
+.work-link{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);display:inline-flex;align-items:center;gap:.4rem;border-bottom:1px solid var(--ink);padding-bottom:1px;transition:color .2s,border-color .2s}
+.work-link:hover{color:var(--plum);border-color:var(--plum)}
+.work-metrics{display:flex;flex-direction:column;gap:1.25rem;min-width:100px;text-align:right;padding-top:4px}
+.wm-v{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--ink);line-height:1;letter-spacing:.02em}
+.wm-l{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+.contact-link{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 0;border-bottom:1px solid var(--rule);transition:border-color .2s}
+.contact-link:hover{border-color:var(--ink)}
+.c-label{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.c-val{font-family:'Space Mono',monospace;font-size:13px;color:var(--ink)}
+
+@media(max-width:900px){
+  .sidebar{display:none}
+  .mob-header{display:flex}
+  .main{margin-left:0}
+  .hero{padding:5rem 1.5rem 2.5rem;min-height:auto;padding-top:5rem}
+  .sec-pad{padding:3rem 1.5rem}
+  .work-item{grid-template-columns:1fr;padding:2rem 1.5rem;gap:1rem}
+  .work-metrics{flex-direction:row;text-align:left}
+}
+
+.cs-hero{display:grid;grid-template-columns:1fr 400px;border-bottom:3px solid var(--ink);min-height:520px}
+.cs-hero-text{padding:4rem;display:flex;flex-direction:column;justify-content:flex-end;border-right:1px solid var(--rule)}
+.cs-hero-img{overflow:hidden}
+.cs-hero-img img{width:100%;height:100%;object-fit:cover;object-position:center}
+.cs-hero-img.dark-bg{background:#1a0a18;display:flex;align-items:center;justify-content:center;padding:2.5rem}
+.cs-hero-img.dark-bg img{max-width:280px;width:100%;height:auto;object-fit:contain}
+.cs-crumb{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
+.cs-co{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--plum);display:block;margin-bottom:.5rem}
+.cs-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7.5vw,88px);line-height:.92;letter-spacing:.02em;color:var(--ink);margin-bottom:1.25rem}
+.cs-deck{font-family:'Lora',serif;font-style:italic;font-size:1.125rem;color:var(--muted);line-height:1.6;max-width:42ch;margin-bottom:1.75rem}
+.cs-meta{display:flex;gap:2.5rem;flex-wrap:wrap;padding-top:1.25rem;border-top:1px solid var(--rule)}
+.cs-ml{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.25rem}
+.cs-mv{font-family:'Space Mono',monospace;font-size:12px;color:var(--ink)}
+.cs-back{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.4rem;margin-bottom:1.5rem;transition:color .2s}
+.cs-back:hover{color:var(--ink)}
+.cs-sec{padding:4rem;border-bottom:1px solid var(--rule);max-width:840px}
+.cs-sec-alt{padding:4rem;border-bottom:1px solid var(--rule);background:var(--plum-light)}
+.cs-sec-alt .cs-inner{max-width:700px}
+.sec-hed{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,4.5vw,56px);letter-spacing:.02em;line-height:.97;color:var(--ink);margin-bottom:1.75rem}
+.obj-row{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--rule);margin-bottom:1.75rem;border:2px solid var(--rule)}
+.obj-card{background:var(--cream);padding:1.75rem}
+.obj-lbl{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--plum);display:block;margin-bottom:.625rem}
+.obj-txt{font-family:'Lora',serif;font-size:1.0625rem;line-height:1.72;color:var(--ink)}
+.step{display:grid;grid-template-columns:32px 1fr;gap:1.5rem;padding:2rem 0;border-bottom:1px solid var(--rule)}
+.step:last-child{border-bottom:none}
+.step-n{font-family:'Space Mono',monospace;font-size:11px;color:var(--rule);padding-top:2px}
+.step-hed{font-family:'Bebas Neue',sans-serif;font-size:23px;letter-spacing:.03em;color:var(--ink);margin-bottom:.625rem}
+.prose{font-family:'Lora',serif;font-size:1.0625rem;line-height:1.82;color:#1E1A1E}
+.prose+.prose{margin-top:1rem}
+.metrics-band{background:var(--ink);padding:3rem 4rem;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;border-bottom:2px solid var(--ink)}
+.m-v{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5.5vw,60px);letter-spacing:.02em;color:var(--cream);line-height:1}
+.m-l{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.45);margin-top:.4rem}
+.learning{padding:1.75rem 0;border-bottom:1px solid var(--rule)}
+.learning:last-child{border-bottom:none}
+.l-hed{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.03em;color:var(--ink);margin-bottom:.625rem}
+.pullquote{border-left:3px solid var(--plum);padding:.5rem 0 .5rem 2rem;margin:2.5rem 0}
+.pullquote p{font-family:'Lora',serif;font-size:1.125rem;font-style:italic;color:var(--ink);line-height:1.65;margin-bottom:.625rem}
+.pullquote cite{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.press-photo{margin:2.5rem 0}
+.press-photo img{width:100%;filter:grayscale(8%)}
+.press-cap{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:.625rem 0;border-bottom:1px solid var(--rule)}
+.cs-footer{padding:2.5rem 4rem;display:flex;align-items:center;justify-content:space-between;border-top:3px solid var(--ink)}
+.cs-nav-link{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:inline-flex;align-items:center;gap:.4rem;transition:color .2s}
+.cs-nav-link:hover{color:var(--plum)}
+@media(max-width:900px){
+  .cs-hero{grid-template-columns:1fr}
+  .cs-hero-img{height:260px}
+  .cs-hero-img.dark-bg{height:260px}
+  .cs-hero-text{padding:5rem 1.5rem 2rem}
+  .cs-sec,.cs-sec-alt{padding:2.5rem 1.5rem}
+  .metrics-band{grid-template-columns:1fr 1fr;padding:2rem 1.5rem}
+  .cs-footer{padding:1.5rem;flex-direction:column;gap:1rem;align-items:flex-start}
+  .obj-row{grid-template-columns:1fr}
+}
+</style>
+
+<style id="gate-style">
+body.locked{overflow:hidden}
+.gate{position:fixed;inset:0;background:var(--cream);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem}
+.gate-inner{text-align:center;max-width:360px;padding:2rem}
+.gate-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.06em;color:var(--ink);display:block;margin-bottom:.25rem}
+.gate-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:2rem}
+.gate-input{font-family:'Space Mono',monospace;font-size:14px;letter-spacing:.1em;width:100%;border:2px solid var(--ink);background:transparent;padding:.875rem 1.25rem;color:var(--ink);outline:none;text-align:center}
+.gate-input:focus{border-color:var(--plum)}
+.gate-input::placeholder{color:var(--muted);font-size:11px}
+.gate-btn{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:var(--ink);color:var(--cream);border:none;padding:.875rem 2rem;cursor:pointer;width:100%;margin-top:.75rem;transition:background .2s}
+.gate-btn:hover{background:var(--plum)}
+.gate-error{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--plum);display:none;margin-top:.5rem}
+.gate-error.show{display:block}
+</style>
+<style id="img-hover-style">
+.cs-hero-img{position:relative;overflow:hidden}
+.cs-hero-img::after{content:'';position:absolute;inset:0;background:rgba(74,25,66,0);transition:background .35s ease;pointer-events:none}
+.cs-hero-img:hover::after{background:rgba(74,25,66,0.18)}
+.cs-hero-img img{transition:transform .5s ease}
+.cs-hero-img:hover img{transform:scale(1.03)}
+</style>
+</head>
+<body>
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-label="Password required">
+  <div class="gate-inner">
+    <span class="gate-name">Saara Lankarani</span>
+    <span class="gate-label">Case study access required</span>
+    <input class="gate-input" id="gate-input" type="password" placeholder="Enter passcode" autocomplete="off" aria-label="Passcode">
+    <button class="gate-btn" onclick="checkGate()">Enter</button>
+    <p class="gate-error" id="gate-error">Incorrect passcode</p>
+  </div>
+</div>
+<aside class="sidebar">
+<div><a href="index.html"><div class="s-mark">Saara Lankarani</div></a><span class="s-role">Chief of Staff</span></div>
+<nav style="margin:auto 0">
+<a href="index.html#work" class="cs-back"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="5" y1="12" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> All work</a>
+<ul style="list-style:none;border-top:1px solid var(--rule);padding-top:1.25rem">
+<li style="margin-bottom:1rem"><a href="#overview" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.5rem" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--muted)'">Overview</a></li>
+<li style="margin-bottom:1rem"><a href="#objective" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.5rem" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--muted)'">Objective</a></li>
+<li style="margin-bottom:1rem"><a href="#approach" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.5rem" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--muted)'">Approach</a></li>
+<li style="margin-bottom:1rem"><a href="#outcome" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.5rem" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--muted)'">Outcome</a></li>
+<li><a href="#learnings" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.5rem" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--muted)'">Learnings</a></li>
+</ul>
+</nav>
+<div class="s-foot"><span class="s-clock" id="sc">--:-- --</span><div class="s-links"><a href="mailto:saarsy@gmail.com" aria-label="Email"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></a><a href="https://linkedin.com/in/saara-lankarani" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a></div></div>
+</aside>
+<header class="mob-header"><span style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;color:var(--ink);">Saara Lankarani</span><a href="index.html#work" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);">← Work</a></header>
+<main class="main">
+<section id="overview">
+<div class="cs-hero" style="grid-template-columns:1fr">
+  <div class="cs-hero-text">
+    <nav class="cs-crumb"><a href="index.html" style="color:var(--muted)">Saara Lankarani</a><span>/</span><span>Meta</span></nav>
+    <span class="cs-co">Meta &middot; Facebook Design &middot; 2022 – 2026</span>
+    <h1 class="cs-title">Critical Alignment &amp; the Notifications Design Vision Sprint</h1>
+    <p class="cs-deck">The Facebook Notifications ecosystem had become highly fragmented, resulting in a noisy, unclear user experience without a unified direction.</p>
+    <div class="cs-meta">
+      <div><span class="cs-ml">Role</span><span class="cs-mv">Design Operations Lead</span></div>
+      <div><span class="cs-ml">Timeline</span><span class="cs-mv">Three weeks</span></div>
+      <div><span class="cs-ml">Mandate from</span><span class="cs-mv">Head of Facebook</span></div>
+    </div>
+  </div>
+</div>
+<div class="cs-sec">
+  <span class="eyebrow">Overview</span>
+  <h2 class="sec-hed">A fragmented ecosystem needed a unified direction.</h2>
+  <p class="prose">The Facebook Notifications ecosystem had become highly fragmented, resulting in a noisy, unclear user experience without a unified direction. Operations were led for a comprehensive Notifications Design Vision Sprint to define a clear call to arms and establish a cohesive long-term product direction.</p>
+  <p class="prose">Following the exit presentation of these visual outputs, the Head of Facebook, Tom Alison, directly requested an accelerated, high-visibility prototype to immediately de-risk and pressure-test the vision.</p>
+</div>
+</section>
+
+<section id="objective" class="cs-sec-alt">
+<div class="cs-inner">
+  <span class="eyebrow">Objective</span>
+  <h2 class="sec-hed">A direct mandate from the Head of Facebook.</h2>
+  <div class="obj-row">
+    <div class="obj-card"><span class="obj-lbl">Strategic</span><p class="obj-txt">Rapidly translate a massive, long-term design vision into a functional prototype to fulfill a direct mandate from the Head of Facebook, stabilizing a historically fragmented core product area.</p></div>
+    <div class="obj-card"><span class="obj-lbl">Functional</span><p class="obj-txt">Build an immediate, high-velocity operational framework to keep cross-functional partners aligned under intense leadership scrutiny while protecting product quality.</p></div>
+  </div>
+</div>
+</section>
+
+<section id="approach" class="cs-sec" style="max-width:100%">
+<div style="max-width:800px">
+  <span class="eyebrow">Approach</span>
+  <h2 class="sec-hed">A multi-layered operational model designed to maintain velocity without compromising execution standards.</h2>
+  <div>
+    <div class="step"><span class="step-n">01</span><div><div class="step-hed">Proactive Risk Elevation</div><p class="prose">Anticipated and elevated flags and risks early, providing crucial visibility into potential downfalls and enabling cross-functional leads to resolve alignment blocks in real time.</p></div></div>
+    <div class="step"><span class="step-n">02</span><div><div class="step-hed">Cross-Functional Resourcing</div><p class="prose">Leveraged the Design Director's endorsement to strategically recruit specialized designers and engineers from the Design Systems team, ensuring the rapid-turnaround build kept quality, craft, and accessibility centered.</p></div></div>
+    <div class="step"><span class="step-n">03</span><div><div class="step-hed">Structured Milestone Management</div><p class="prose">Partnered closely with Product and Engineering leads to set rigorous expectations and track daily progress, keeping point-of-contacts strictly on schedule.</p></div></div>
+  </div>
+</div>
+</section>
+
+<div class="metrics-band">
+  <div><div class="m-v">3 weeks</div><div class="m-l">Prototype delivery</div></div>
+  <div><div class="m-v">Tom Alison</div><div class="m-l">Direct mandate</div></div>
+  <div><div class="m-v">Org-wide</div><div class="m-l">Playbook adoption</div></div>
+</div>
+
+<section id="outcome" class="cs-sec" style="max-width:100%">
+<div style="max-width:800px">
+  <span class="eyebrow">Were we successful?</span>
+  <h2 class="sec-hed">Delivered in three weeks. The model became the playbook.</h2>
+  <p class="prose">The cross-functional squad was unblocked to execute and deliver the finalized prototype to executive leadership in exactly three weeks, setting a new standard for how the organization approaches high-stakes leadership asks.</p>
+  <p class="prose">The rapid collaboration model was codified into an official organizational playbook, later adopted and replicated by adjacent priority teams, including Immersive Facebook, to kick off their own demo v-teams.</p>
+  <div class="pullquote">
+    <p>"Saara's leadership helped invent a new collaboration model that is now<br>a playbook for other teams."</p>
+    <cite>Design Director, Meta</cite>
+  </div>
+</div>
+</section>
+
+<section id="learnings" class="cs-sec-alt">
+<div class="cs-inner">
+  <h2 class="sec-hed">Challenges &amp; learnings.</h2>
+  <div class="learning"><div class="l-hed">Ambiguity is the operating condition, not the exception</div><p class="prose">Faced with extreme ambiguity and a high-pressure timeline, the work was structuring clarity fast enough to keep the team moving, making the operating model visible, explicit, and simple enough to hold under pressure.</p></div>
+  <div class="learning"><div class="l-hed">Risk elevation is a leadership act</div><p class="prose">Surfacing flags early, before they became blockers, was what kept the timeline intact. Waiting for problems to surface on their own would have cost the team days it&nbsp;did&nbsp;not&nbsp;have.</p></div>
+  <div class="learning"><div class="l-hed">A well-run sprint can outlast the sprint itself</div><p class="prose">The process became the product. The collaboration model built for this moment was adopted by other teams precisely because it was documented and transferable, not just effective in the moment.</p></div>
+</div>
+</section>
+<div class="cs-footer"><span></span><a href="harrys.html" class="cs-nav-link">Harry's M&A Workshop <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+</main><script>
+(function(){
+  function clk(){var e=document.getElementById('sc');if(e)e.textContent=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hour12:true}).format(new Date());}
+  clk();setInterval(clk,15000);
+  var ws=document.querySelectorAll('.swap-w');var si=0;
+  if(ws.length)setInterval(function(){ws[si].classList.add('hidden');si=(si+1)%ws.length;ws[si].classList.remove('hidden');},3000);
+  var ss=document.querySelectorAll('section[id]');
+  var na=document.querySelectorAll('.s-nav a');
+  window.addEventListener('scroll',function(){
+    var c='hero';
+    ss.forEach(function(s){if(window.scrollY>=s.offsetTop-s.clientHeight/3)c=s.id;});
+    na.forEach(function(a){var h=a.getAttribute('href')||'';a.classList.toggle('active',h==='#'+c||h.endsWith('#'+c));});
+  },{passive:true});
+})();
+</script><script>
+(function(){
+  const KEY='sl_access';
+  if(sessionStorage.getItem(KEY)==='1'){document.getElementById('gate').remove();return;}
+  document.body.classList.add('locked');
+  document.getElementById('gate-input').addEventListener('keydown',function(e){if(e.key==='Enter')checkGate();});
+})();
+function checkGate(){
+  const v=document.getElementById('gate-input').value.trim().toLowerCase();
+  if(v==='saara2026'){sessionStorage.setItem('sl_access','1');document.getElementById('gate').remove();document.body.classList.remove('locked');}
+  else{document.getElementById('gate-error').classList.add('show');document.getElementById('gate-input').value='';document.getElementById('gate-input').focus();}
+}
+</script>
+</body>
+</html>
